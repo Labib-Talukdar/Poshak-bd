@@ -4,7 +4,6 @@ services:
     runtime: node
     plan: free
     buildCommand: npm ci && npm run build
-    preDeployCommand: npm run postgres:init
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:

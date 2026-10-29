@@ -162,8 +162,6 @@ async function ensureGuestLookupSchema() {
   )`)
   await pool.query(`CREATE INDEX IF NOT EXISTS idx_guest_lookup_sessions_phone ON guest_lookup_sessions(phone)`)
 }
-ensureGuestLookupSchema().catch(error => console.error('Guest lookup schema setup failed:', error.message))
-
 async function ensureAdminAccount() {
   const email = String(process.env.ADMIN_EMAIL || '').trim().toLowerCase()
   const password = String(process.env.ADMIN_PASSWORD || '')
@@ -173,8 +171,6 @@ async function ensureAdminAccount() {
     VALUES($1,$2,'Store Administrator','admin',TRUE)
     ON CONFLICT (email) DO UPDATE SET role='admin',is_active=TRUE,updated_at=CURRENT_TIMESTAMP`, [email,passwordHash])
 }
-ensureAdminAccount().catch(error => console.error('Admin account setup failed:', error.message))
-
 function normalizePhone(value) {
   const digits = String(value || '').replace(/[^0-9]/g, '')
   if (digits.startsWith('880')) return '0' + digits.slice(3)
@@ -546,6 +542,12 @@ app.get('*', (q, s) => {
   s.sendFile(path.resolve('client/dist/index.html'))
 })
 
-pool.query('SELECT 1')
-  .then(() => app.listen(process.env.PORT || 3000, () => console.log('Poshak running on PostgreSQL port ' + (process.env.PORT || 3000))))
-  .catch(e => { console.error('PostgreSQL connection failed:', e.message); process.exit(1) })
+async function startServer() {
+  const schema = fs.readFileSync(path.resolve('postgres-schema.sql'), 'utf8')
+  await pool.query(schema)
+  await ensureGuestLookupSchema()
+  await ensureAdminAccount()
+  app.listen(process.env.PORT || 3000, () => console.log('Poshak running on PostgreSQL port ' + (process.env.PORT || 3000)))
+}
+
+startServer().catch(e => { console.error('PostgreSQL startup failed:', e.message); process.exit(1) })
