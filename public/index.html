@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Poshak – Clothing</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF1F5;--ink:#16202F;--mut:#5B6678;--line:#D5DBE4;--acc:#0E6B50}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'Hind Siliguri',system-ui,sans-serif}
+h1,h2,h3,.brand{font-family:'Bricolage Grotesque',system-ui,sans-serif;margin:0}
+header{position:sticky;top:0;z-index:20;background:rgba(238,241,245,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:14px max(20px,calc((100vw - 1100px)/2));animation:navDrop .7s ease-out}
+.brand{font-size:28px;font-weight:800;letter-spacing:-1px}.brand::after{content:"";display:inline-block;width:7px;height:7px;margin-left:4px;border-radius:50%;background:var(--acc)}
+.nav-links{display:flex;align-items:center;gap:28px}.nav-links a{color:var(--ink);text-decoration:none;font-weight:600;position:relative}.nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:-5px;height:2px;background:var(--acc);transition:.25s}.nav-links a:hover::after{right:0}
+button,select,input,textarea{font:inherit;color:inherit}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:9px 16px;cursor:pointer;font-weight:600}
+.btn:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #7FD1B5;outline-offset:2px}
+.hero{position:relative;overflow:hidden;padding:72px 20px 44px;max-width:1100px;margin:auto;min-height:390px}.hero h1{font-size:clamp(44px,8vw,82px);line-height:.95;font-weight:800;letter-spacing:-3px;max-width:9ch;animation:heroUp .9s .15s both}.hero h1 span{color:var(--acc)}
+.hero p{color:var(--mut);max-width:44ch;margin:18px 0 24px;animation:heroUp .9s .35s both}.hero-actions{display:flex;gap:10px;animation:heroUp .9s .45s both}.hero-actions .btn{padding:12px 20px}.hero-actions .outline{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.hero-orbit{position:absolute;right:7%;top:58px;width:280px;height:280px;border-radius:50%;background:linear-gradient(145deg,#d6e3dc,#c9d3e4);box-shadow:0 30px 70px #16202F22;animation:float 5s ease-in-out infinite}.hero-orbit::before{content:"P";position:absolute;inset:38px;border-radius:50%;display:grid;place-items:center;background:#fff;color:var(--acc);font:800 120px 'Bricolage Grotesque',sans-serif;box-shadow:0 16px 40px #16202F18}.hero-orbit::after{content:"";position:absolute;width:70px;height:70px;border-radius:18px;right:-24px;top:-12px;background:#f5c85b;animation:spin 7s linear infinite}
+main{max-width:1100px;margin:auto;padding:0 20px 60px}
+#tabs{display:flex;gap:8px;margin:20px 0}#tabs button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 16px;cursor:pointer}#tabs .on{background:var(--ink);color:#fff;border-color:var(--ink)}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}
+.card{background:#fff;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;animation:cardIn .55s both}.card:nth-child(2n){animation-delay:.08s}.card:nth-child(3n){animation-delay:.16s}
+.card:hover{transform:translateY(-7px);box-shadow:0 18px 40px #16202F14;transition:.3s}.ph{aspect-ratio:4/5;border-radius:8px;display:grid;place-items:center;font:800 72px 'Bricolage Grotesque',sans-serif;color:#0003;overflow:hidden}.ph[style*="url"]{background-color:#ddd!important}
+.card h3{font-size:17px}.pr{margin:0;font-weight:600;color:var(--acc)}.mut{color:var(--mut);margin:0}
+select,input,textarea{border:1px solid var(--line);border-radius:8px;padding:8px;background:#fff;width:100%}
+#drawer{position:fixed;top:0;right:0;height:100%;width:min(400px,100%);background:#fff;box-shadow:-8px 0 30px #0002;transform:translateX(100%);transition:transform .25s;z-index:10;display:flex;flex-direction:column;padding:18px;gap:10px;overflow:auto}
+#drawer.open{transform:none}.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.qty button{width:28px;height:28px;border:1px solid var(--line);background:#fff;border-radius:6px;cursor:pointer}
+.tot{border-top:1px solid var(--line);padding-top:8px}
+@keyframes navDrop{from{transform:translateY(-100%)}to{transform:none}}@keyframes heroUp{from{opacity:0;transform:translateY(35px)}to{opacity:1;transform:none}}@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}@keyframes float{50%{transform:translateY(-14px) rotate(2deg)}}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:800px){.nav-links a{display:none}.hero{min-height:520px;padding-top:48px}.hero-orbit{width:210px;height:210px;right:calc(50% - 105px);top:auto;bottom:-45px}.hero-orbit::before{inset:28px;font-size:88px}.hero h1{letter-spacing:-2px}.hero p{max-width:34ch}}@media(prefers-reduced-motion:reduce){#drawer,.hero h1,.hero p,.hero-actions,.hero-orbit,.card{animation:none;transition:none}}
+</style></head><body>
+<header><span class="brand">Poshak</span><nav class="nav-links"><a href="#grid">Shop</a><a href="#f">Delivery</a><button class="btn" onclick="drawer.classList.add('open')">Cart (<span id="cnt">0</span>)</button></nav></header>
+<section class="hero"><div><h1>Clothes for <span>every day.</span></h1><p>Panjabi, kurti, saree and kids wear. Cash on delivery all over Bangladesh.</p><div class="hero-actions"><a class="btn" href="#grid" style="text-decoration:none">Shop now</a><a class="btn outline" href="#f" style="text-decoration:none">How to order</a></div></div><div class="hero-orbit" aria-hidden="true"></div></section>
+<main><div id="tabs"></div><div id="grid"></div></main>
+<aside id="drawer" aria-label="Cart"><div class="row"><h2>Your cart</h2><button onclick="drawer.classList.remove('open')" aria-label="Close cart">✕</button></div>
+<div id="items"></div><div id="sum"></div>
+<form id="f" onsubmit="order(event)" style="display:grid;gap:8px"><input name="name" placeholder="Full name" required><input name="phone" placeholder="Phone (01XXXXXXXXX)" required pattern="01[3-9][0-9]{8}">
+<textarea name="address" placeholder="Full address" required rows="2"></textarea><select name="district" id="dist" onchange="drawCart()"><option value="Dhaka">Inside Dhaka (৳60)</option><option value="Other">Outside Dhaka (৳120)</option></select>
+<p class="mut">Payment: Cash on delivery</p><button class="btn" id="go">Place order</button><p id="msg" role="status"></p></form></aside>
+<script>
+const $=s=>document.querySelector(s),drawer=$('#drawer'),tk=n=>'৳'+n.toLocaleString('en-IN');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+let P=[],cat='All',cart=JSON.parse(localStorage.getItem('cart')||'[]');
+const save=()=>{localStorage.setItem('cart',JSON.stringify(cart));drawCart()};
+async function load(){P=await(await fetch('/api/products')).json();tabs();grid();drawCart()}
+function tabs(){$('#tabs').innerHTML=['All',...new Set(P.map(p=>p.category))].map(c=>`<button class="${c==cat?'on':''}" onclick="cat='${c}';tabs();grid()">${c}</button>`).join('')}
+function grid(){$('#grid').innerHTML=P.filter(p=>cat=='All'||p.category==cat).map(p=>`<article class="card"><div class="ph" style="background:${p.image?`url('${esc(p.image)}') center/cover`:`hsl(${p.id*47%360} 30% 82%)`}">${p.image?'':esc(p.name[0])}</div><h3>${esc(p.name)}</h3><p class="pr">${tk(p.price)}</p>${p.stock>0?`<select id="s${p.id}" aria-label="Size">${p.sizes.split(',').map(s=>`<option>${esc(s)}</option>`).join('')}</select><button class="btn" onclick="add(${p.id})">Add to cart</button>`:'<p class="mut">Sold out</p>'}</article>`).join('')}
+function add(id){const size=$('#s'+id).value,l=cart.find(c=>c.id==id&&c.size==size);l?l.qty++:cart.push({id,size,qty:1});save();drawer.classList.add('open')}
+function chg(i,d){cart[i].qty+=d;if(cart[i].qty<1)cart.splice(i,1);save()}
+function drawCart(){let sub=0;$('#cnt').textContent=cart.reduce((a,c)=>a+c.qty,0);
+ $('#items').innerHTML=cart.length?cart.map((c,i)=>{const p=P.find(x=>x.id==c.id);if(!p)return'';sub+=p.price*c.qty;return`<div class="row"><div>${esc(p.name)}<br><span class="mut">Size ${esc(c.size)} · ${tk(p.price)}</span></div><div class="qty"><button onclick="chg(${i},-1)" aria-label="Less">−</button> ${c.qty} <button onclick="chg(${i},1)" aria-label="More">+</button></div></div>`}).join(''):'<p class="mut">Your cart is empty. Pick something from the shop.</p>';
+ const d=$('#dist').value=='Dhaka'?60:120;$('#sum').innerHTML=cart.length?`<div class="tot row"><span>Subtotal</span><b>${tk(sub)}</b></div><div class="row"><span>Delivery</span><b>${tk(d)}</b></div><div class="row"><span>Total</span><b>${tk(sub+d)}</b></div>`:'';$('#f').style.display=cart.length?'grid':'none'}
+async function order(e){e.preventDefault();$('#go').disabled=true;const f=Object.fromEntries(new FormData(e.target));
+ const r=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...f,items:cart})}),j=await r.json();$('#go').disabled=false;
+ if(!r.ok){$('#msg').textContent=j.error;return}cart=[];save();e.target.reset();$('#items').innerHTML=`<p><b>Order #${j.id} placed.</b> We will call you to confirm.</p>`;$('#msg').textContent='';load()}
+load();
+</script></body></html>

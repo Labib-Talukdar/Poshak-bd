@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: poshak
+      POSTGRES_USER: poshak
+      POSTGRES_PASSWORD: poshak
+    ports:
+      - "5432:5432"
+    volumes:
+      - poshak_postgres:/var/lib/postgresql/data
+      - ./postgres-schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+
+volumes:
+  poshak_postgres:

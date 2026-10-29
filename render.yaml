@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: poshak
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    preDeployCommand: npm run postgres:init
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PGSSL
+        value: "true"
+      - key: OTP_DELIVERY_MODE
+        value: mock
+      - key: DATABASE_URL
+        fromDatabase:
+          name: poshak-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+
+databases:
+  - name: poshak-db
+    plan: free
