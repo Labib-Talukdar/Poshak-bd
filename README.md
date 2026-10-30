@@ -29,4 +29,6 @@ A Render PostgreSQL database does not contain your local SQLite products automat
 node scripts/migrate-to-postgres.js --apply
 ```
 
-Uploaded product files are written to the directory selected by `UPLOAD_DIR` (default: `public/uploads`). Render's local disk is ephemeral unless an attached persistent disk/object storage is used. For a persistent disk, set `UPLOAD_DIR=/var/data/uploads` and attach a disk at `/var/data`. For the free tier, use full HTTPS image URLs from the admin dashboard instead; uploaded files will otherwise disappear on redeploy.
+Product uploads can be stored permanently on Cloudinary. Set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` in the Render environment. With these variables set, the admin dashboard sends uploaded files to Cloudinary and stores the returned HTTPS URL in PostgreSQL; uploaded files survive redeploys and restarts.
+
+Without Cloudinary credentials, uploads use `UPLOAD_DIR` (default: `public/uploads`). Render filesystem storage is ephemeral unless a persistent disk is attached. For a persistent disk, set `UPLOAD_DIR=/var/data/uploads` and attach a disk at `/var/data`.

@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 const helmet = require('helmet')
 const rateLimit = require('express-rate-limit')
+const cloudinary = require('cloudinary').v2
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://poshak:poshak@localhost:5432/poshak',
@@ -19,6 +20,37 @@ const pool = new Pool({
 
 const uploadDir = path.resolve(process.env.UPLOAD_DIR || 'public/uploads')
 fs.mkdirSync(uploadDir, { recursive: true })
+
+const cloudinaryConfigured = Boolean(
+  process.env.CLOUDINARY_CLOUD_NAME &&
+  process.env.CLOUDINARY_API_KEY &&
+  process.env.CLOUDINARY_API_SECRET
+)
+if (cloudinaryConfigured) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true
+  })
+}
+
+async function uploadProductImage(file) {
+  if (!file) return ''
+  if (!cloudinaryConfigured) return '/uploads/' + file.filename
+
+  try {
+    const result = await cloudinary.uploader.upload(file.path, {
+      folder: 'poshak/products',
+      resource_type: 'image',
+      transformation: [{ width: 1600, height: 1600, crop: 'limit', quality: 'auto', fetch_format: 'auto' }]
+    })
+    return result.secure_url
+  } finally {
+    fs.rm(file.path, { force: true }, () => {})
+  }
+}
+
 const upload = multer({
   storage: multer.diskStorage({
     destination: uploadDir,
@@ -491,7 +523,7 @@ app.post('/api/admin/products', admin, upload.single('imageFile'), async (q, s, 
     const categorySlug = slugify(categoryName)
     const category = await client.query(`INSERT INTO categories(name,slug) VALUES($1,$2)
       ON CONFLICT(slug) DO UPDATE SET name=EXCLUDED.name,updated_at=CURRENT_TIMESTAMP RETURNING id`, [categoryName, categorySlug])
-    const image = q.file ? '/uploads/' + q.file.filename : String(b.image || '')
+    const image = await uploadProductImage(q.file) || String(b.image || '')
     const slug = slugify(name) + '-' + crypto.randomUUID().slice(0, 8)
     const product = await client.query(`INSERT INTO products(category_id,name,slug,base_price_bdt,status,image_url_or_key,legacy_stock)
       VALUES($1,$2,$3,$4,'active',$5,$6) RETURNING id`, [category.rows[0].id,name,slug,price,image,stock])
@@ -518,7 +550,8 @@ app.patch('/api/admin/products/:id', admin, upload.single('imageFile'), async (q
     }
     const category = await client.query(`INSERT INTO categories(name,slug) VALUES($1,$2)
       ON CONFLICT(slug) DO UPDATE SET name=EXCLUDED.name,updated_at=CURRENT_TIMESTAMP RETURNING id`, [categoryName, slugify(categoryName)])
-    const image = q.file ? '/uploads/' + q.file.filename : String(b.image == null || b.image === '__KEEP__' ? old.image_url_or_key || '' : b.image)
+    const uploadedImage = await uploadProductImage(q.file)
+    const image = uploadedImage || String(b.image == null || b.image === '__KEEP__' ? old.image_url_or_key || '' : b.image)
     await client.query(`UPDATE products SET category_id=$1,name=$2,base_price_bdt=$3,image_url_or_key=$4,legacy_stock=$5,updated_at=CURRENT_TIMESTAMP WHERE id=$6`, [category.rows[0].id,name,price,image,stock,q.params.id])
     await syncProductVariants(client, q.params.id, b.sizes || '', stock)
     await client.query('COMMIT')
