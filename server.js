@@ -17,10 +17,11 @@ const pool = new Pool({
   ssl: process.env.PGSSL === 'true' ? { rejectUnauthorized: false } : false
 })
 
-fs.mkdirSync('public/uploads', { recursive: true })
+const uploadDir = path.resolve(process.env.UPLOAD_DIR || 'public/uploads')
+fs.mkdirSync(uploadDir, { recursive: true })
 const upload = multer({
   storage: multer.diskStorage({
-    destination: 'public/uploads',
+    destination: uploadDir,
     filename(q, file, cb) {
       const ext = path.extname(file.originalname).toLowerCase().replace(/[^.a-z0-9]/g, '')
       cb(null, Date.now() + '-' + Math.random().toString(36).slice(2) + ext)
@@ -131,6 +132,7 @@ app.use(helmet({ contentSecurityPolicy: false }))
 app.use(cookieParser())
 app.use(express.json({ limit: '50kb' }))
 app.use(express.static('client/dist'))
+app.use('/uploads', express.static(uploadDir))
 app.use(express.static('public'))
 
 app.get('/api/health', async (q, s) => {
@@ -537,6 +539,10 @@ app.use((e, q, s, n) => {
   s.status(400).json({ error: e.message || 'Request failed' })
 })
 
+app.get(['/admin', '/admin/'], (q, s) => {
+  s.sendFile(path.resolve('public/admin.html'))
+})
+
 app.get('*', (q, s) => {
   if (q.path.startsWith('/api/')) return s.status(404).json({ error: 'Not found' })
   s.sendFile(path.resolve('client/dist/index.html'))
@@ -547,7 +553,8 @@ async function startServer() {
   await pool.query(schema)
   await ensureGuestLookupSchema()
   await ensureAdminAccount()
-  app.listen(process.env.PORT || 3000, () => console.log('Poshak running on PostgreSQL port ' + (process.env.PORT || 3000)))
+  const port = process.env.PORT || 3000
+  app.listen(port, '0.0.0.0', () => console.log(`Poshak running on port ${port}`))
 }
 
 startServer().catch(e => { console.error('PostgreSQL startup failed:', e.message); process.exit(1) })
