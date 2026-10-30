@@ -171,7 +171,7 @@ async function ensureAdminAccount() {
   const passwordHash = await bcrypt.hash(password, 12)
   await pool.query(`INSERT INTO users(email,password_hash,full_name,role,is_active)
     VALUES($1,$2,'Store Administrator','admin',TRUE)
-    ON CONFLICT (email) DO UPDATE SET role='admin',is_active=TRUE,updated_at=CURRENT_TIMESTAMP`, [email,passwordHash])
+    ON CONFLICT (email) DO UPDATE SET password_hash=EXCLUDED.password_hash,role='admin',is_active=TRUE,updated_at=CURRENT_TIMESTAMP`, [email,passwordHash])
 }
 function normalizePhone(value) {
   const digits = String(value || '').replace(/[^0-9]/g, '')
