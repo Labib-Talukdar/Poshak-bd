@@ -5,6 +5,9 @@ import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
 import { motion } from 'framer-motion'
 import './styles.css'
 
+const reloopLogo = '/reloop-logo.png'
+const reloopBrandKit = '/reloop-loader.png'
+
 const money = (value) => `৳${Number(value).toLocaleString('en-IN')}`
 const readOrderHistory = () => {
   try { return JSON.parse(localStorage.getItem('poshak-order-history') || '[]') } catch { return [] }
@@ -121,7 +124,7 @@ function Storefront() {
 
   return <>
     <header className="site-header">
-      <a className="logo" href="#top" aria-label="Poshak home">POSHAK<span>.</span></a>
+      <a className="logo" href="#top" aria-label="Reloop home"><img className="brand-logo" src={reloopLogo} alt="Reloop"/></a>
       <nav aria-label="Primary navigation"><a href="#shop">Shop</a><a href="#story">Our story</a></nav>
       <div className="header-actions"><button className="orders-button" onClick={() => setOrdersOpen(true)} aria-label="View my orders">My orders</button><button className={`wishlist-button ${wishlistOnly ? 'active' : ''}`} onClick={() => { setWishlistOnly(value => !value); document.querySelector('#shop')?.scrollIntoView({ behavior: 'smooth' }) }} aria-label={`Show wishlist, ${wishlist.length} items`}>{wishlistOnly ? <HeartSolidIcon/> : <HeartIcon/>}<b>{wishlist.length}</b></button><button className="cart-button" onClick={() => setCartOpen(true)} aria-label={`Open cart, ${cartCount} items`}><ShoppingBagIcon className="icon"/><span>Cart</span><b>{cartCount}</b></button></div>
     </header>
@@ -157,7 +160,7 @@ function Storefront() {
         {!loading && visible.length === 0 && <div className="empty-products"><h3>No products found</h3><p>Try another search or category.</p></div>}
       </section>
 
-      <section className="story" id="story"><p className="eyebrow"><span></span> Why Poshak</p><h2>Made for real life.<br/>Designed to feel <em>natural.</em></h2></section>
+      <section className="story" id="story"><p className="eyebrow"><span></span> Why Reloop</p><h2>Made for real life.<br/>Designed to feel <em>natural.</em></h2></section>
     </main>
 
     <div className={`overlay ${ordersOpen ? 'show' : ''}`} onClick={() => setOrdersOpen(false)} aria-hidden="true" />
@@ -226,7 +229,7 @@ function ProductDetail() {
   const related = products.filter(item => item.category === product.category && item.id !== product.id).slice(0, 3)
 
   return <main className="detail-page">
-    <header className="checkout-header"><Link className="logo" to="/">POSHAK<span>.</span></Link><Link className="back-link" to="/"><ArrowLeftIcon className="icon"/> Back to shop</Link></header>
+    <header className="checkout-header"><Link className="logo" to="/" aria-label="Reloop home"><img className="brand-logo" src={reloopLogo} alt="Reloop"/></Link><Link className="back-link" to="/"><ArrowLeftIcon className="icon"/> Back to shop</Link></header>
     <motion.section className="detail-grid" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45 }}>
       <div className="detail-image">{product.image ? <img src={product.image} alt={product.name}/> : <div className="detail-monogram">{product.name.charAt(0)}</div>}</div>
       <div className="detail-copy"><p className="eyebrow"><span></span> {product.category}</p><h1>{product.name}</h1><strong className="detail-price">{money(product.price)}</strong><p className="detail-description">Comfortable everyday wear, selected for a clean fit and lasting quality. Available for cash on delivery across Bangladesh.</p>
@@ -328,7 +331,7 @@ function Checkout() {
     } finally { setSubmitting(false) }
   }
 
-  return <main className="checkout-page"><header className="checkout-header"><Link className="logo" to="/">POSHAK<span>.</span></Link><button onClick={() => navigate(-1)}><ArrowLeftIcon className="icon"/> Back to shop</button></header>
+  return <main className="checkout-page"><header className="checkout-header"><Link className="logo" to="/" aria-label="Reloop home"><img className="brand-logo" src={reloopLogo} alt="Reloop"/></Link><button onClick={() => navigate(-1)}><ArrowLeftIcon className="icon"/> Back to shop</button></header>
     <div className="checkout-grid"><section><p className="eyebrow"><span></span> Secure checkout</p><h1>Delivery details</h1>
       {status.message && <div className={`checkout-status ${status.type}`} role="status">{status.message}</div>}
       {status.type !== 'success' && <form className="checkout-form" onSubmit={placeOrder}><label>Full name<input name="name" required autoComplete="name" placeholder="Your full name"/></label><label>Phone number<input name="phone" required pattern="01[3-9][0-9]{8}" autoComplete="tel" placeholder="01XXXXXXXXX"/></label><label>Full address<textarea name="address" required autoComplete="street-address" rows="3" placeholder="House, road, area and landmark"/></label><label>Delivery area<select name="district" value={district} onChange={e => setDistrict(e.target.value)}><option value="Dhaka">Inside Dhaka</option><option value="Other">Outside Dhaka</option></select></label><button className="place-order" disabled={submitting || cart.length === 0}>{submitting ? 'Placing order…' : `Place order · ${money(subtotal + delivery)}`}<ArrowRightIcon className="icon"/></button><p className="payment-note">Cash on delivery · No card details required</p></form>}
@@ -338,5 +341,40 @@ function Checkout() {
 }
 
 export default function AppNew() {
-  return <BrowserRouter><Routes><Route path="/" element={<Storefront/>}/><Route path="/product/:id" element={<ProductDetail/>}/><Route path="/checkout" element={<Checkout/>}/><Route path="/order-success/:id" element={<OrderSuccess/>}/><Route path="*" element={<Storefront/>}/></Routes></BrowserRouter>
+  const [siteReady, setSiteReady] = useState(false)
+  const [loaderLeaving, setLoaderLeaving] = useState(false)
+
+  useEffect(() => {
+    const startedAt = Date.now()
+    const minimumTime = new Promise(resolve => window.setTimeout(resolve, 1800))
+    const readinessTimeout = new Promise(resolve => window.setTimeout(resolve, 5000))
+    const loadedAssets = Promise.all([
+      document.fonts?.ready || Promise.resolve(),
+      fetch('/api/products').then(response => response.ok ? response.json() : null).catch(() => null),
+      Promise.all([
+        reloopLogo,
+        reloopBrandKit,
+      ].map(source => new Promise(resolve => {
+        const image = new Image()
+        image.onload = resolve
+        image.onerror = resolve
+        image.src = source
+      }))),
+    ]).catch(() => null)
+
+    Promise.all([Promise.race([loadedAssets, readinessTimeout]), minimumTime]).then(() => {
+      const elapsed = Date.now() - startedAt
+      window.setTimeout(() => setLoaderLeaving(true), Math.max(0, 100 - elapsed))
+      window.setTimeout(() => setSiteReady(true), 700)
+    })
+  }, [])
+
+  return <>
+    {!siteReady && <div className={`brand-loader ${loaderLeaving ? 'leaving' : ''}`} role="status" aria-label="Loading Reloop">
+      <span className="loader-line loader-line-left" />
+      <span className="loader-line loader-line-right" />
+      <div className="loader-brand"><img src={reloopBrandKit} alt="Reloop"/></div>
+    </div>}
+    <BrowserRouter><Routes><Route path="/" element={<Storefront/>}/><Route path="/product/:id" element={<ProductDetail/>}/><Route path="/checkout" element={<Checkout/>}/><Route path="/order-success/:id" element={<OrderSuccess/>}/><Route path="*" element={<Storefront/>}/></Routes></BrowserRouter>
+  </>
 }

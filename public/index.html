@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Poshak – Clothing</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Reloop – Clothing</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#EEF1F5;--ink:#16202F;--mut:#5B6678;--line:#D5DBE4;--acc:#0E6B50}
@@ -27,7 +27,7 @@ select,input,textarea{border:1px solid var(--line);border-radius:8px;padding:8px
 @keyframes navDrop{from{transform:translateY(-100%)}to{transform:none}}@keyframes heroUp{from{opacity:0;transform:translateY(35px)}to{opacity:1;transform:none}}@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}@keyframes float{50%{transform:translateY(-14px) rotate(2deg)}}@keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:800px){.nav-links a{display:none}.hero{min-height:520px;padding-top:48px}.hero-orbit{width:210px;height:210px;right:calc(50% - 105px);top:auto;bottom:-45px}.hero-orbit::before{inset:28px;font-size:88px}.hero h1{letter-spacing:-2px}.hero p{max-width:34ch}}@media(prefers-reduced-motion:reduce){#drawer,.hero h1,.hero p,.hero-actions,.hero-orbit,.card{animation:none;transition:none}}
 </style></head><body>
-<header><span class="brand">Poshak</span><nav class="nav-links"><a href="#grid">Shop</a><a href="#f">Delivery</a><button class="btn" onclick="drawer.classList.add('open')">Cart (<span id="cnt">0</span>)</button></nav></header>
+<header><span class="brand">Reloop</span><nav class="nav-links"><a href="#grid">Shop</a><a href="#f">Delivery</a><button class="btn" onclick="drawer.classList.add('open')">Cart (<span id="cnt">0</span>)</button></nav></header>
 <section class="hero"><div><h1>Clothes for <span>every day.</span></h1><p>Panjabi, kurti, saree and kids wear. Cash on delivery all over Bangladesh.</p><div class="hero-actions"><a class="btn" href="#grid" style="text-decoration:none">Shop now</a><a class="btn outline" href="#f" style="text-decoration:none">How to order</a></div></div><div class="hero-orbit" aria-hidden="true"></div></section>
 <main><div id="tabs"></div><div id="grid"></div></main>
 <aside id="drawer" aria-label="Cart"><div class="row"><h2>Your cart</h2><button onclick="drawer.classList.remove('open')" aria-label="Close cart">✕</button></div>

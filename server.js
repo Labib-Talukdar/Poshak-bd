@@ -170,7 +170,7 @@ app.use(express.static('public'))
 app.get('/api/health', async (q, s) => {
   try {
     await pool.query('SELECT 1')
-    s.json({ ok: true, service: 'poshak' })
+    s.json({ ok: true, service: 'reloop' })
   } catch (error) {
     s.status(503).json({ ok: false, error: 'Database unavailable' })
   }
@@ -587,7 +587,7 @@ async function startServer() {
   await ensureGuestLookupSchema()
   await ensureAdminAccount()
   const port = process.env.PORT || 3000
-  app.listen(port, '0.0.0.0', () => console.log(`Poshak running on port ${port}`))
+  app.listen(port, '0.0.0.0', () => console.log(`Reloop running on port ${port}`))
 }
 
 startServer().catch(e => { console.error('PostgreSQL startup failed:', e.message); process.exit(1) })
